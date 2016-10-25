@@ -2,7 +2,7 @@
 
 @implementation className
 
--(void)printObjectDesc:(id)obj
+-(void)printObjectDesc
 {
     id obj = self;
     //display methods on object
@@ -99,5 +99,22 @@
             result = [NSString stringWithCString:type encoding:[NSString defaultCStringEncoding]];
     }
     return result;
+}
+
+// Ever wonder how often a particular method in a superclass was being called?!
+// Or do you need to explicitly call something that the developer wanted to be private?!
+// for this to work you will have to go to the Build Settings and make
+//"Enable Strict Checking of obj_msgSend Calls" = NO
+//ENABLE_STRICT_OBJC_MSGSEND = NO;
+
+//  WARNING: THIS IS FOR DIAGNOSTIC PURPOSES ONLY
+//  DO NOT ATTEMPT TO SHIP OR PUBLISH CODE USING THIS TECHNIQUE
+-(void)anyMethodFromMySuperClass:(double)d heresAnotherArg:(float)g
+{
+    struct objc_super spr = {
+        .receiver = self,
+        .super_class = class_getSuperclass(self.class)
+    };
+    objc_msgSendSuper(&spr,@selector(anyMethodFromMySuperClass:heresAnotherArg:),d,g);
 }
 @end
